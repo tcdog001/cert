@@ -13,8 +13,10 @@ private() {
 
 	openssl genrsa -des3 -out ${name}.key 1024
 	openssl rsa -in ${name}.key -out ${name}.key
-	openssl req -new -key ${name}.key -out ${name}.csr -config openssl.cnf
 	cat ${name}.key | base64 > ${name}.key.base64
+
+	openssl req -new -key ${name}.key -out ${name}.csr -config openssl.cnf
+	cat ${name}.csr | base64 > ${name}.csr.base64
 }
 
 cert() {
