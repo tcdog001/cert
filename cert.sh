@@ -8,13 +8,22 @@ prepare() {
 	echo 01 > demoCA/serial
 }
 
-b64() {
-	local name="$1"
-
-	cat ${name} | base64 > ${name}.base64
+do_help() {
+	echo "$0 dir"
 }
 
 main() {
+	local obj="$1"
+
+	if ((1!=$#)); then
+		do_help
+		return 1
+	elif [[ ! -d ${obj} ]]; then
+		do_help
+		return 1
+	fi
+	
+	pushd ${obj}
 	openssl genrsa -out ca.key 2048
 	openssl req -x509 -new -nodes -key ca.key -subj "/CN=*.pepfi.com" -days 5000 -out ca.crt
 	openssl genrsa -out server.key 2048
@@ -27,13 +36,9 @@ main() {
 
 	echo extendedKeyUsage=clientAuth > client.ext
 	openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -extfile client.ext -out client.crt -days 5000
+	popd
 
-	b64 ca.key
-	b64 ca.crt
-	b64 server.key
-	b64 server.crt
-	b64 client.key
-	b64 client.crt
+	./base64.sh ${obj}
 }
 
 main "$@"
