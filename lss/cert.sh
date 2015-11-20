@@ -8,36 +8,32 @@ prepare() {
 	echo 01 > demoCA/serial
 }
 
-private() {
+b64() {
 	local name="$1"
 
-	openssl genrsa -des3 -out ${name}.key 1024
-	openssl rsa -in ${name}.key -out ${name}.key
-	cat ${name}.key | base64 > ${name}.key.base64
-
-	openssl req -new -key ${name}.key -out ${name}.csr -config openssl.cnf
-	cat ${name}.csr | base64 > ${name}.csr.base64
-}
-
-cert() {
-	local name="$1"
-
-	prepare
-	openssl ca -in ${name}.csr -out ${name}.crt -cert ca.crt -keyfile ca.key -config openssl.cnf
-	cat ${name}.crt | base64 > ${name}.crt.base64
+	cat ${name} | base64 > ${name}.base64
 }
 
 main() {
-	private server
-	private client
+	openssl genrsa -out ca.key 2048
+	openssl req -x509 -new -nodes -key ca.key -subj "/CN=*.pepfi.com" -days 5000 -out ca.crt
+	openssl genrsa -out server.key 2048
+	openssl req -new -key server.key -subj "/CN=*.pepfi.com" -out server.csr
+	openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 5000
 
-	openssl req -new -x509 -keyout ca.key -out ca.crt -config openssl.cnf
-	openssl rsa -in ca.key -out ca.key
-	cat ca.key | base64 > ca.key.base64
-	cat ca.crt | base64 > ca.crt.base64
+	openssl genrsa -out client.key 2048
+	openssl req -new -key client.key -subj "/CN=*.ltefi.com" -out client.csr
+	openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt -days 5000
 
-	cert server
-	cert client
+	echo extendedKeyUsage=clientAuth > client.ext
+	openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -extfile client.ext -out client.crt -days 5000
+
+	b64 ca.key
+	b64 ca.crt
+	b64 server.key
+	b64 server.crt
+	b64 client.key
+	b64 client.crt
 }
 
 main "$@"
