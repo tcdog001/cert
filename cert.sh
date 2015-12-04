@@ -25,13 +25,13 @@ main() {
 	
 	pushd ${obj}
 	openssl genrsa -out ca.key 2048
-	openssl req -x509 -new -nodes -key ca.key -subj "/CN=*.pepfi.com" -days 5000 -out ca.crt
+	openssl req -x509 -new -nodes -key ca.key -subj "/CN=*.autelan.com" -days 5000 -out ca.crt
 	openssl genrsa -out server.key 2048
-	openssl req -new -key server.key -subj "/CN=*.pepfi.com" -out server.csr
+	openssl req -new -key server.key -subj "/CN=*.autelan.com" -out server.csr
 	openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 5000
 
 	openssl genrsa -out client.key 2048
-	openssl req -new -key client.key -subj "/CN=*.ltefi.com" -out client.csr
+	openssl req -new -key client.key -subj "/CN=*.autelan.com" -out client.csr
 	openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt -days 5000
 
 	echo extendedKeyUsage=clientAuth > client.ext
