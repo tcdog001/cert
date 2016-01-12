@@ -11,17 +11,18 @@ do_help() {
 }
 
 main() {
-	local obj="$1"
+	local oem="$1"
+	local obj="$2"
 
-        if ((1!=$#)); then
+        if ((2!=$#)); then
 		do_help
 		return 1
-	elif [[ ! -d ${obj} ]]; then
+	elif [[ ! -d ${oem}/${obj} ]]; then
 		do_help
 		return 1
 	fi
 
-	pushd ${obj}
+	pushd ${oem}/${obj}
 	b64 ca.key
 	b64 ca.crt
 	b64 server.key
