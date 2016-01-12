@@ -15,7 +15,7 @@ do_help() {
 main() {
 	local oem="$1"
 	local obj="$2"
-	local domain="$3"; domain=${domain:-autelan.com}
+	local domain
 
 	if ((2!=$#)); then
 		do_help
@@ -24,6 +24,15 @@ main() {
 		do_help
 		return 1
 	fi
+
+	case ${oem} in
+	deft|*)
+		domain="autelan.com"
+		;;
+	raytight)
+		domain="raytight.com"
+		;;
+	esac	
 	
 	pushd ${oem}/${obj}
 	openssl genrsa -out ca.key 2048
