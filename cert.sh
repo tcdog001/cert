@@ -52,6 +52,7 @@ main() {
 	popd
 
 	./base64.sh ${oem} ${obj}
+	./c.sh ${oem} ${obj}
 }
 
 main "$@"
