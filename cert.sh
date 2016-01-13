@@ -43,10 +43,10 @@ main() {
 	openssl req -new -key server.key -subj "/CN=*.${domain}" -out server.csr
 	openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 5000
 
+	
 	openssl genrsa -out client.key 2048
-	openssl req -new -key client.key -subj "/CN=*.${domain}" -out client.csr
-	openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt -days 5000
-
+	openssl req -new -key client.key -subj "/CN=*.ltefi.com" -out client.csr
+#	openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt -days 5000
 	echo extendedKeyUsage=clientAuth > client.ext
 	openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -extfile client.ext -out client.crt -days 5000
 	popd
