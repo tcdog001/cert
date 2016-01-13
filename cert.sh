@@ -26,14 +26,16 @@ main() {
 	fi
 
 	case ${oem} in
-	deft|*)
-		domain="autelan.com"
-		;;
 	raytight)
 		domain="raytight.com"
 		;;
+	deft|*)
+		domain="autelan.com"
+		;;
 	esac	
-	
+
+	echo "domain=${domain}"
+
 	pushd ${oem}/${obj}
 	openssl genrsa -out ca.key 2048
 	openssl req -x509 -new -nodes -key ca.key -subj "/CN=*.${domain}" -days 5000 -out ca.crt
